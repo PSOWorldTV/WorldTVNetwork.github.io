@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PSOWorldTV Network</title>
+  <style>
+    /* ---------- CORE: black & white palette only ---------- */
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:#bfbfbf;
+      --glass: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      --NavBlur: rgba(255,255,255,0.04);
+      --glow: 0 0 18px rgba(255,255,255,0.09);
+      --radius: 28px;
+      --transition: 250ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    /* dark mode inverted variables (still black/white) */
+    :root.light{
+      --bg:#fff;
+      --fg:#000;
+      --muted:#4a4a4a;
+      --glass: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
+      --NavBlur: rgba(0,0,0,0.06);
+      --glow: 0 0 18px rgba(0,0,0,0.09);
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg);
+      color:var(--fg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.3;
+      overscroll-behavior-y:contain;
+    }
+
+    /* ---------- Loading screen (centered) ---------- */
+    .loader-wrap{
+      position:fixed;
+      inset:0;
+      background:var(--bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+    }
+    .loader-symbol{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:center;
+      width:120px;
+      height:32px;
+    }
+    .loader-dot{
+      width:10px;
+      height:10px;
+      border-radius:3px;
+      background:var(--fg);
+      opacity:.18;
+      transform:translateY(0);
+    }
+    /* hopping animation: sequential small vertical hops */
+    @keyframes hop{
+      0% { opacity:.18; transform: translateY(0); }
+      30% { opacity:1; transform: translateY(-10px); }
+      60% { opacity:.6; transform: translateY(0); }
+      100%{ opacity:.18; transform: translateY(0); }
+    }
+    .loader-dot:nth-child(1){ animation: hop 900ms infinite; animation-delay:0ms; }
+    .loader-dot:nth-child(2){ animation: hop 900ms infinite; animation-delay:150ms; }
+    .loader-dot:nth-child(3){ animation: hop 900ms infinite; animation-delay:300ms; }
+
+    /* ---------- App container ---------- */
+    .app{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      position:relative;
+    }
+
+    header.site-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:34px 28px 28px 28px;
+      gap:16px;
+    }
+    .brand{
+      font-weight:700;
+      letter-spacing:.6px;
+      font-size:18px;
+    }
+    .subtitle{font-size:12px;color:var(--muted);}
+
+    /* ---------- Main content ---------- */
+    main{
+      padding:28px;
+      flex:1 1 auto;
+      max-width:1200px;
+      margin:0 auto;
+      width:100%;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:22px;
+      align-items:center;
+      background:var(--glass);
+      padding:34px;
+      border-radius:18px;
+      box-shadow:var(--glow);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .hero h1{margin:0;font-size:28px;}
+    .hero p{margin:0;color:var(--muted);}
+
+    /* ---------- Media cards ---------- */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+      margin-top:22px;
+    }
+    .card{
+      background:var(--bg);
+      border-radius:12px;
+      padding:18px;
+      border:1px solid var(--NavBlur);
+      box-shadow:0 6px 24px rgba(0,0,0,0.12) inset;
+    }
+    .card h3{margin:0 0 8px 0;font-size:16px}
+    .card p{margin:0;color:var(--muted);font-size:13px}
+
+    /* ---------- Big translucent footer area (desktop only) ---------- */
+    footer.site-footer{
+      padding:44px 28px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* ---------- NAV (oval taskbar) ---------- */
+    .nav-oval{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:10px;
+      border-radius:999px;
+      backdrop-filter: blur(6px) saturate(0.7);
+      -webkit-backdrop-filter: blur(6px);
+      border:1px solid var(--NavBlur);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: var(--glow);
+      z-index:999;
+      transition: transform var(--transition), bottom var(--transition), top var(--transition);
+    }
+
+    .nav-btn{
+      min-width:72px;
+      padding:10px 14px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      letter-spacing:.6px;
+      cursor:pointer;
+      user-select:none;
+      border: none;
+      background:transparent;
+      color:var(--fg);
+      transition: transform 120ms ease, box-shadow 100ms linear;
+      outline: none;
+    }
+
+    /* micro glow on press (millisecond) */
+    .nav-btn:active{
+      box-shadow: 0 0 22px rgba(255,255,255,0.12);
+      transform:scale(.996);
+    }
+
+    /* keyboard focus styles */
+    .nav-btn:focus{ box-shadow: 0 0 18px rgba(255,255,255,0.08); }
+
+    .media_menu{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    /* media dropdown (simple html-only show using checkbox hack) */
+    .media-toggle{ display:none; }
+    .media-panel{
+      position:absolute;
+      bottom:70px;
+      left:50%;
+      transform:translateX(-50%);
+      background:var(--glass);
+      padding:8px;
+      border-radius:10px;
+      border:1px solid var(--NavBlur);
+      display:none;
+      gap:8px;
+      box-shadow:var(--glow);
+    }
+    .media-item{ display:block; padding:8px 14px; border-radius:8px; text-decoration:none; color:var(--fg); font-weight:600;}
+    .media-item small{ display:block; color:var(--muted); font-weight:500; font-size:11px}
+
+    /* When checkbox checked, show panel */
+    .media-toggle:checked + label + .media-panel { display:flex; flex-direction:column; }
+
+    /* ---------- Mobile vs Desktop placements ---------- */
+    /* Default: mobile layout - nav at bottom */
+    .nav-oval{ bottom:22px; top:auto; }
+
+    /* Desktop: move to top and increase width */
+    @media(min-width:900px){
+      .nav-oval{ top:26px; bottom:auto; width:760px; padding:12px 22px; }
+      .media-panel{ bottom:auto; top:70px; }
+      header.site-header{ padding-top:70px; }
+    }
+
+    /* Ensure nav stays visually fixed and not glued to corner */
+    .nav-oval.stuck{ position:fixed; }
+
+    /* small UI niceties */
+    .icon{
+      display:inline-block;
+      width:16px;height:16px;
+      margin-right:8px;
+      opacity:.92;
+      vertical-align:middle;
+    }
+
+    /* SIMPLE light/dark toggle icon look */
+    .toggle-icon{
+      width:36px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;
+      border:1px solid var(--NavBlur);
+    }
+
+    /* tiny responsive tweaks */
+    @media(max-width:420px){
+      .brand{ font-size:16px }
+      .nav-btn{ min-width:64px; padding:8px 10px }
+      .nav-oval{ width:calc(100% - 36px); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loader" class="loader-wrap" aria-hidden="false">
+    <div class="loader-symbol" aria-hidden="true">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+  </div>
+
+  <div class="app" id="app" hidden>
+    <header class="site-header">
+      <div>
+        <div class="brand">PSOWorldTV Network</div>
+        <div class="subtitle">All-Black &amp; White — Inspired by Apple • Motion by Genshin</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="subtitle">Minimal • Responsive • Pure aesthetic</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <h1 id="hero-title">Welcome to PSOWorldTV Network</h1>
+          <p>Clean. Intentional. Monochrome gradients, subtle glass, and tactile micro-animations.</p>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <a class="nav-btn" href="#home" role="button" aria-label="Go home">Open Home</a>
+          <a class="nav-btn" href="#media" role="button" aria-label="Open media">Explore Media</a>
+          <a class="nav-btn" href="#about" role="button" aria-label="About">About PSOWorldTV</a>
+        </div>
+      </section>
+
+      <div class="grid">
+        <article class="card">
+          <h3>Featured</h3>
+          <p>Minimal video drops and curated longform — designed for clarity and calm.</p>
+        </article>
+        <article class="card">
+          <h3>Live</h3>
+          <p>Upcoming: special live sessions. (Placeholder for integration)</p>
+        </article>
+        <article class="card">
+          <h3>Archive</h3>
+          <p>Past highlights collected for on-demand viewing.</p>
+        </article>
+      </div>
+
+    </main>
+
+    <footer class="site-footer">
+      PSOWorldTV Network — crafted with intention. © PSOWorldTV
+    </footer>
+  </div>
+
+  <!-- NAV OVAL (bottom on mobile, top on desktop) -->
+  <nav class="nav-oval" role="navigation" aria-label="Primary">
+    <!-- HOME Button -->
+    <a class="nav-btn" href="#home" id="nav-home" aria-pressed="false">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 11.5L12 4l9 7.5v6.5A1 1 0 0 1 20 21H4a1 1 0 0 1-1-1v-6.5z"></path></svg>
+      HOME
+    </a>
+
+    <!-- Light/Dark toggle - uses a checkbox hack to change root class (works without external JS only with internal script below) -->
+    <input id="theme-toggle" class="media-toggle" type="checkbox" aria-hidden="true" />
+    <label for="theme-toggle" class="nav-btn" title="Toggle light/dark" id="theme-label" style="display:flex;align-items:center;gap:8px;">
+      <span class="toggle-icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+      </span>
+      <span class="subtitle" style="font-size:13px">Mode</span>
+    </label>
+
+    <!-- MEDIA Button (when clicked shows small panel of links) -->
+    <input id="media-toggle" class="media-toggle" type="checkbox" />
+    <label for="media-toggle" class="nav-btn" style="position:relative;" aria-haspopup="true" aria-expanded="false">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      MEDIA
+    </label>
+
+    <div class="media-panel" role="menu" aria-label="Media links">
+      <!-- External links: facebook, youtube, instagram, other -->
+      <a class="media-item" href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook <small>Social</small></a>
+      <a class="media-item" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube <small>Channel</small></a>
+      <a class="media-item" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram <small>Gallery</small></a>
+      <a class="media-item" href="/more.html" target="_self">More <small>Other page</small></a>
+    </div>
+
+  </nav>
+
+  <script>
+    // Inline JS (kept tiny) to control loading screen timeout and theme toggle.
+    (function(){
+      const loader = document.getElementById('loader');
+      const app = document.getElementById('app');
+      const timeout = 2000; // 2 seconds enforced timeout
+
+      // When DOM ready, start a fallback: hide loader after timeout
+      document.addEventListener('readystatechange', ()=>{
+        if(document.readyState === 'interactive' || document.readyState === 'complete'){
+          // if app content needs server time, you could hide loader earlier by calling hideLoader()
+          setTimeout(hideLoader, timeout);
+        }
+      });
+
+      function hideLoader(){
+        if(!loader) return;
+        loader.style.transition = 'opacity 220ms ease';
+        loader.style.opacity = '0';
+        setTimeout(()=>{ loader.hidden=true; app.hidden=false; },240);
+      }
+
+      // Theme toggle: toggles root class "light"; preserves in localStorage
+      const themeCheckbox = document.getElementById('theme-toggle');
+      const root = document.documentElement;
+      function applyTheme(isLight){
+        if(isLight) root.classList.add('light'); else root.classList.remove('light');
+        localStorage.setItem('psow_world_theme_light', isLight ? '1' : '0');
+      }
+      // initialize
+      const saved = localStorage.getItem('psow_world_theme_light');
+      if(saved === '1') { themeCheckbox.checked = true; applyTheme(true); }
+
+      themeCheckbox.addEventListener('change',(e)=>{
+        applyTheme(e.target.checked);
+      });
+
+      // small aria/state update for media panel label
+      const mediaCheckbox = document.getElementById('media-toggle');
+      const mediaLabel = document.querySelector('label[for="media-toggle"]');
+      if(mediaCheckbox && mediaLabel){
+        mediaCheckbox.addEventListener('change', ()=>{
+          mediaLabel.setAttribute('aria-expanded', !!mediaCheckbox.checked);
+        });
+      }
+
+      // Add tiny transient glow effect on button press (auto-remove after 140ms)
+      document.addEventListener('pointerdown', (e)=>{
+        const btn = e.target.closest('.nav-btn');
+        if(!btn) return;
+        btn.classList.add('pressed');
+        setTimeout(()=> btn.classList.remove('pressed'), 140);
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
