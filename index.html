@@ -4,73 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PSOWorldTV Network</title>
-  <style>
-    :root { --bg:#000; --fg:#fff; --muted:#bfbfbf; --glass: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); --NavBlur: rgba(255,255,255,0.04); --glow: 0 0 18px rgba(255,255,255,0.09); }
-    :root.light { --bg:#fff; --fg:#000; --muted:#4a4a4a; --glass: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01)); --NavBlur: rgba(0,0,0,0.06); --glow: 0 0 18px rgba(0,0,0,0.09); }
-    html,body{height:100%;margin:0;font-family:-apple-system;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
-
-    .loader-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:9999;}
-    .loader-symbol{display:flex;gap:14px;}
-    .loader-dot{width:10px;height:10px;border-radius:3px;background:var(--fg);opacity:.18;}
-    @keyframes hop{0%{opacity:.18;transform:translateY(0);}30%{opacity:1;transform:translateY(-10px);}60%{opacity:.6;transform:translateY(0);}100%{opacity:.18;transform:translateY(0);}}
-    .loader-dot:nth-child(1){animation:hop 900ms infinite 0ms;}
-    .loader-dot:nth-child(2){animation:hop 900ms infinite 150ms;}
-    .loader-dot:nth-child(3){animation:hop 900ms infinite 300ms;}
-
-    header{padding:32px 28px;display:flex;align-items:center;justify-content:space-between;}
-    .brand{font-weight:700;font-size:18px;}
-    .subtitle{color:var(--muted);font-size:13px;}
-
-    .hero{text-align:center;padding:80px 20px 60px;}
-    .hero h1{margin:0;font-size:28px;}
-    .hero p{margin:8px 0 0;color:var(--muted);font-size:15px;}
-
-    .nav-oval{position:fixed;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;
-      padding:10px 16px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-      border:1px solid var(--NavBlur);background:var(--glass);box-shadow:var(--glow);z-index:50;}
-    .nav-btn{min-width:72px;padding:10px 14px;border:none;background:transparent;color:var(--fg);
-      font-weight:600;border-radius:12px;cursor:pointer;font-family:-apple-system;}
-    .toggle-icon{width:36px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--NavBlur);border-radius:8px;}
-    .nav-oval{bottom:22px;}
-    @media(min-width:900px){.nav-oval{top:26px;bottom:auto;width:760px;}}
-
-    /* ---- Media Bubble ---- */
-    #mediaBubble {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%) scale(0);
-      transform-origin: bottom center;
-      background: var(--glass);
-      border: 1px solid var(--NavBlur);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-radius: 20px;
-      padding: 14px 24px;
-      box-shadow: var(--glow);
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.28s cubic-bezier(.22,.61,.36,1), opacity 0.2s ease;
-      opacity: 0;
-      z-index: 100;
-    }
-    #mediaBubble.show {
-      transform: translateX(-50%) scale(1);
-      opacity: 1;
-    }
-    #mediaBubble a {
-      text-decoration: none;
-      color: var(--fg);
-      font-size: 22px;
-    }
-    #mediaBubble a:active {transform: scale(.9);}
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="loader" class="loader-wrap" aria-hidden="false">
-    <div class="loader-symbol"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>
+    <div class="loader-symbol">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
   </div>
 
   <div id="app" hidden>
@@ -84,15 +26,14 @@
       <p>Fashion Excitement</p>
     </section>
 
-    <!-- PODCAST / SONG ALBUM SECTION -->
     <main>
       <section id="album-section">
         <article>
-          <img src="https://raw.githubusercontent.com/PSOWorldTV/WorldTVNetwork.github.io/refs/heads/main/FB_IMG_1762918839508.jpg" alt="Album 1" style="width:100%;max-width:300px;border-radius:22px;margin:30px auto;display:block;">
-          <img src="https://raw.githubusercontent.com/PSOWorldTV/WorldTVNetwork.github.io/refs/heads/main/unnamed.webp" alt="Album 2" style="width:100%;max-width:300px;border-radius:22px;margin:30px auto;display:block;">
-          <div style="padding:20px 30px;text-align:center;">
-            <h2 style="margin:0;font-size:22px;">Podcast or Song Album</h2>
-            <p style="color:var(--muted);font-size:15px;line-height:1.6;">
+          <img src="https://raw.githubusercontent.com/PSOWorldTV/WorldTVNetwork.github.io/refs/heads/main/FB_IMG_1762918839508.jpg" alt="Album 1" class="album-img">
+          <img src="https://raw.githubusercontent.com/PSOWorldTV/WorldTVNetwork.github.io/refs/heads/main/unnamed.webp" alt="Album 2" class="album-img">
+          <div class="album-text">
+            <h2>Podcast or Song Album</h2>
+            <p>
               Experience the latest collection from PSOWorldTV — blending emotion and artistry through crafted audio experiences. 
               Scroll through our albums and podcasts inspired by timeless Apple design simplicity.
             </p>
@@ -111,46 +52,23 @@
     <!-- NAV -->
     <nav class="nav-oval">
       <button class="nav-btn" id="nav-home">
-        <svg viewBox="0 0 24 24" width="16" height="16"><path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M3 11.5L12 4l9 7.5v6.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16">
+          <path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M3 11.5L12 4l9 7.5v6.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path>
+        </svg>
         &nbsp;HOME
       </button>
-      <button class="nav-btn" id="modeBtn"><span class="toggle-icon" id="modeIcon">☀️</span></button>
+      <button class="nav-btn" id="modeBtn">
+        <span class="toggle-icon" id="modeIcon">☀️</span>
+      </button>
       <button class="nav-btn" id="mediaBtn">
-        <svg viewBox="0 0 24 24" width="16" height="16"><path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16">
+          <path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
         &nbsp;MEDIA
       </button>
     </nav>
   </div>
 
-  <script>
-    (function(){
-      const loader=document.getElementById('loader'),app=document.getElementById('app');
-      const root=document.documentElement,modeBtn=document.getElementById('modeBtn'),modeIcon=document.getElementById('modeIcon');
-      const mediaBtn=document.getElementById('mediaBtn'),mediaBubble=document.getElementById('mediaBubble');
-      const THEME_KEY='psow_world_theme_light';
-
-      function applyTheme(isLight){if(isLight)root.classList.add('light');else root.classList.remove('light');localStorage.setItem(THEME_KEY,isLight?'1':'0');modeIcon.textContent=isLight?'🌙':'☀️';}
-      const saved=localStorage.getItem(THEME_KEY);applyTheme(saved==='1');
-      modeBtn.addEventListener('click',()=>applyTheme(!root.classList.contains('light')));
-
-      function isSupportedMobile(){const ua=navigator.userAgent||navigator.vendor||window.opera||'';return /Android|iPhone|iPod/i.test(ua);}
-      function showUnsupportedOverlay(){document.getElementById('unsupportedOverlay').style.display='block';}
-
-      // --- Media Bubble Toggle Animation ---
-      let bubbleOpen=false;
-      mediaBtn.addEventListener('click',()=>{
-        bubbleOpen=!bubbleOpen;
-        mediaBubble.classList.toggle('show',bubbleOpen);
-      });
-      // Tap outside to close bubble
-      document.addEventListener('click',e=>{
-        if(bubbleOpen && !mediaBtn.contains(e.target) && !mediaBubble.contains(e.target)){
-          bubbleOpen=false;mediaBubble.classList.remove('show');
-        }
-      });
-
-      window.addEventListener('load',()=>{setTimeout(()=>{loader.style.opacity='0';setTimeout(()=>{loader.remove();app.hidden=false;if(!isSupportedMobile())showUnsupportedOverlay();},200);},2000);});
-    })();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
