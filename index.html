@@ -9,7 +9,7 @@
     :root { --bg:#000; --fg:#fff; --muted:#bfbfbf; --glass: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); --NavBlur: rgba(255,255,255,0.04); --glow: 0 0 18px rgba(255,255,255,0.09); --radius:18px; }
     :root.light { --bg:#fff; --fg:#000; --muted:#4a4a4a; --glass: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01)); --NavBlur: rgba(0,0,0,0.06); --glow: 0 0 18px rgba(0,0,0,0.09); }
 
-    html,body { height:100%; margin:0; font-family:-apple-system; background:var(--bg); color:var(--fg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow:hidden; }
+    html,body { height:100%; margin:0; font-family:-apple-system; background:var(--bg); color:var(--fg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
 
     /* ---------- LOADING (centered) ---------- */
     .loader-wrap {
@@ -23,81 +23,37 @@
     .loader-dot:nth-child(2){ animation:hop 900ms infinite 150ms; } 
     .loader-dot:nth-child(3){ animation:hop 900ms infinite 300ms; }
 
-    /* ---------- HEADER ---------- */
     header { padding:32px 28px; display:flex; align-items:center; justify-content:space-between; z-index:10; position:relative; }
     .brand { font-weight:700; font-size:18px; }
     .subtitle { color:var(--muted); font-size:13px; }
 
-    /* ---------- CENTERED HERO ---------- */
-    .hero {
-      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; pointer-events:none;
-    }
-    .hero-inner { transform:translateY(-6vh); } /* slightly above perfect center */
-    .hero h1 { margin:0; font-size:28px; pointer-events:auto; }
-    .hero p { margin:8px 0 0; color:var(--muted); font-size:15px; pointer-events:auto; }
+    .hero { position:relative; text-align:center; padding:80px 20px 60px; }
+    .hero h1 { margin:0; font-size:28px; }
+    .hero p { margin:8px 0 0; color:var(--muted); font-size:15px; }
 
-    /* ---------- NAV OVAL (centered) ---------- */
-    .nav-oval {
-      position:fixed; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:14px;
+    .nav-oval { position:fixed; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:14px;
       padding:10px 16px; border-radius:999px; backdrop-filter: blur(6px) saturate(0.7); -webkit-backdrop-filter: blur(6px);
-      border:1px solid var(--NavBlur); background:var(--glass); box-shadow:var(--glow); z-index:50; transition:bottom .3s, top .3s;
-      pointer-events:auto;
+      border:1px solid var(--NavBlur); background:var(--glass); box-shadow:var(--glow); z-index:50;
     }
-    .nav-btn {
-      min-width:72px; padding:10px 14px; border:none; background:transparent; color:var(--fg);
-      font-weight:600; border-radius:12px; cursor:pointer; transition:transform .08s, box-shadow .08s; font-family:-apple-system;
+    .nav-btn { min-width:72px; padding:10px 14px; border:none; background:transparent; color:var(--fg);
+      font-weight:600; border-radius:12px; cursor:pointer; font-family:-apple-system;
     }
-    .nav-btn:active { transform:scale(.97); box-shadow:0 0 18px rgba(255,255,255,.12); }
     .toggle-icon { width:36px; height:28px; display:flex; align-items:center; justify-content:center; border:1px solid var(--NavBlur); border-radius:8px; }
 
-    /* mobile bottom / desktop top */
-    .nav-oval { bottom:22px; top:auto; }
+    .nav-oval { bottom:22px; }
     @media(min-width:900px){
       .nav-oval { top:26px; bottom:auto; width:760px; }
     }
 
-    /* ---------- DESKTOP-ONLY BLUR OVERLAY (hidden by default) ---------- */
-    .unsupported-overlay {
-      display:none; /* shown by script when needed */
-      position:fixed; inset:0; z-index:9998; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
-      pointer-events:auto;
-    }
-    .unsupported-backdrop {
-      position:absolute; inset:0;
-      /* background color will be set via inline style from script depending on theme */
-    }
-    .unsupported-card {
-      position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:9999;
-      width:clamp(320px, 40vw, 680px); max-width:90%;
-      border-radius:16px; padding:26px 28px; text-align:center;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
-      font-family:-apple-system; line-height:1.4;
-      /* background color and text color set by script to adapt to theme */
-    }
-    .unsupported-card h2 { margin:0 0 10px 0; font-size:18px; font-weight:700; }
-    .unsupported-card p { margin:0; color:inherit; font-size:14px; opacity:.95; }
-
-    /* ensure clicks are blocked behind overlay */
-    .blocked { pointer-events:none; }
-
-    /* small accessibility */
-    @media (max-height:420px) {
-      .unsupported-card{ transform:translate(-50%,-40%); }
-    }
+    .unsupported-overlay { display:none; position:fixed; inset:0; z-index:9998; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .unsupported-card { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:16px; padding:26px 28px; text-align:center; }
   </style>
 </head>
 <body>
-  <!-- LOADING SCREEN -->
   <div id="loader" class="loader-wrap" aria-hidden="false">
-    <div class="loader-symbol" aria-hidden="true">
-      <div class="loader-dot"></div>
-      <div class="loader-dot"></div>
-      <div class="loader-dot"></div>
-    </div>
+    <div class="loader-symbol"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>
   </div>
 
-  <!-- Main app (keeps your header, centered hero and nav only) -->
   <div id="app" hidden>
     <header>
       <div class="brand">PSOWorldTV Network</div>
@@ -105,34 +61,45 @@
     </header>
 
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-inner">
-        <h1 id="hero-title">Welcome to WorldTV Network</h1>
-        <p>Fashion Excitement</p>
-      </div>
+      <h1 id="hero-title">Welcome to WorldTV Network</h1>
+      <p>Fashion Excitement</p>
     </section>
 
-    <!-- NAV OVAL -->
+    <!-- PODCAST / SONG ALBUM SECTION -->
+    <main>
+      <section id="album-section">
+        <article>
+          <img src="https://via.placeholder.com/400x400" alt="Album Placeholder 1" style="width:100%;max-width:400px;border-radius:22px;margin:30px auto;display:block;">
+          <img src="https://via.placeholder.com/400x400" alt="Album Placeholder 2" style="width:100%;max-width:400px;border-radius:22px;margin:30px auto;display:block;">
+          <div style="padding:20px 30px;text-align:center;">
+            <h2 style="margin:0;font-size:22px;">Podcast or Song Album</h2>
+            <p style="color:var(--muted);font-size:15px;line-height:1.6;">
+              Experience the latest collection from PSOWorldTV — blending emotion and artistry through crafted audio experiences. 
+              Scroll through our albums and podcasts inspired by timeless Apple design simplicity.
+            </p>
+          </div>
+        </article>
+      </section>
+    </main>
+
     <nav class="nav-oval" role="navigation" aria-label="Primary">
-      <button class="nav-btn" id="nav-home" aria-pressed="false">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" width="16" height="16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 11.5L12 4l9 7.5v6.5A1 1 0 0 1 20 21H4a1 1 0 0 1-1-1v-6.5z"></path></svg>
+      <button class="nav-btn" id="nav-home">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M3 11.5L12 4l9 7.5v6.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path></svg>
         &nbsp;HOME
       </button>
 
-      <button class="nav-btn" id="modeBtn" title="Toggle light/dark">
-        <span class="toggle-icon" id="modeIcon">☀️</span>
-      </button>
+      <button class="nav-btn" id="modeBtn"><span class="toggle-icon" id="modeIcon">☀️</span></button>
 
-      <button class="nav-btn" id="mediaBtn" aria-haspopup="true" aria-expanded="false">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" width="16" height="16"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      <button class="nav-btn" id="mediaBtn">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path></svg>
         &nbsp;MEDIA
       </button>
     </nav>
   </div>
 
-  <!-- Unsupported overlay for desktop/tablet (hidden by default) -->
   <div id="unsupportedOverlay" class="unsupported-overlay" aria-hidden="true">
-    <div id="unsupportedBackdrop" class="unsupported-backdrop" aria-hidden="true"></div>
-    <div id="unsupportedCard" class="unsupported-card" role="alert" aria-live="assertive">
+    <div id="unsupportedBackdrop"></div>
+    <div id="unsupportedCard" class="unsupported-card">
       <h2>PSOWorldTV Network</h2>
       <p>This website is not supported on Desktop or Tablet devices.<br>Please use your Phone. Thank you!</p>
     </div>
@@ -140,103 +107,15 @@
 
   <script>
     (function(){
-      // --- loader behavior (2s timeout) ---
-      const loader = document.getElementById('loader');
-      const app = document.getElementById('app');
-      const unsupportedOverlay = document.getElementById('unsupportedOverlay');
-      const unsupportedBackdrop = document.getElementById('unsupportedBackdrop');
-      const unsupportedCard = document.getElementById('unsupportedCard');
-
-      // theme logic (save/load)
-      const THEME_KEY = 'psow_world_theme_light';
-      const root = document.documentElement;
-      const modeBtn = document.getElementById('modeBtn');
-      const modeIcon = document.getElementById('modeIcon');
-
-      function applyTheme(isLight){
-        if(isLight) root.classList.add('light'); else root.classList.remove('light');
-        localStorage.setItem(THEME_KEY, isLight ? '1' : '0');
-        // update icon (moon for light => indicates pressing switches to dark)
-        modeIcon.textContent = isLight ? '🌙' : '☀️';
-      }
-      // initialize theme from storage
-      const saved = localStorage.getItem(THEME_KEY);
-      if(saved === '1'){ applyTheme(true); } else { applyTheme(false); }
-
-      modeBtn.addEventListener('click', ()=>{
-        const isLight = root.classList.toggle('light');
-        applyTheme(isLight);
-      });
-
-      // detect mobile: only Android or iPhone allowed (no tablet/desktop)
-      function isSupportedMobile(){
-        const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-        const isAndroid = /Android/i.test(ua);
-        const isIPhone = /iPhone/i.test(ua);
-        // treat iPod also as iPhone
-        const isIPod = /iPod/i.test(ua);
-        return !!(isAndroid || isIPhone || isIPod);
-      }
-
-      // show unsupported overlay (instant, no fade) and block interactions
-      function showUnsupportedOverlay(){
-        // style backdrop according to theme
-        const lightMode = root.classList.contains('light');
-        if(lightMode){
-          // light mode: soft white translucent glass
-          unsupportedBackdrop.style.background = 'rgba(255,255,255,0.55)';
-          unsupportedCard.style.background = 'rgba(255,255,255,0.9)';
-          unsupportedCard.style.color = '#000';
-          unsupportedCard.style.boxShadow = '0 10px 40px rgba(0,0,0,0.12)';
-        } else {
-          // dark mode: deep translucent black glass
-          unsupportedBackdrop.style.background = 'rgba(0,0,0,0.55)';
-          unsupportedCard.style.background = 'rgba(0,0,0,0.85)';
-          unsupportedCard.style.color = '#fff';
-          unsupportedCard.style.boxShadow = '0 10px 40px rgba(0,0,0,0.6)';
-        }
-        unsupportedOverlay.style.display = 'block';
-        unsupportedOverlay.setAttribute('aria-hidden','false');
-        // block clicks to page
-        document.body.classList.add('blocked');
-      }
-
-      // hide unsupported overlay if ever needed to re-enable (not used here)
-      function hideUnsupportedOverlay(){
-        unsupportedOverlay.style.display = 'none';
-        unsupportedOverlay.setAttribute('aria-hidden','true');
-        document.body.classList.remove('blocked');
-      }
-
-      // after load: remove loader and either show app or overlay instantly
-      window.addEventListener('load', ()=>{
-        setTimeout(()=>{
-          // remove loader instantly (with small opacity change)
-          loader.style.transition = 'opacity 180ms linear';
-          loader.style.opacity = '0';
-          setTimeout(()=>{ loader.remove(); app.hidden = false; }, 200);
-          // now check device support
-          // we intentionally run detection after loader removal so overlay appears instantly afterwards if needed
-          if(!isSupportedMobile()){
-            // not Android/iPhone -> show desktop unsupported overlay instantly
-            showUnsupportedOverlay();
-          } else {
-            // supported mobile: ensure overlay hidden and interactions enabled
-            hideUnsupportedOverlay();
-          }
-        }, 2000); // enforced 2s loading screen
-      });
-
-      // Accessibility: trap focus if overlay shown (basic)
-      // When overlay is shown, prevent tabbing to background
-      document.addEventListener('focus', function(ev){
-        if(unsupportedOverlay.style.display === 'block'){
-          // keep focus on overlay card
-          unsupportedCard.focus && unsupportedCard.focus();
-          ev.stopPropagation();
-        }
-      }, true);
-
+      const loader=document.getElementById('loader'),app=document.getElementById('app');
+      const root=document.documentElement,modeBtn=document.getElementById('modeBtn'),modeIcon=document.getElementById('modeIcon');
+      const THEME_KEY='psow_world_theme_light';
+      function applyTheme(isLight){if(isLight)root.classList.add('light');else root.classList.remove('light');localStorage.setItem(THEME_KEY,isLight?'1':'0');modeIcon.textContent=isLight?'🌙':'☀️';}
+      const saved=localStorage.getItem(THEME_KEY);applyTheme(saved==='1');
+      modeBtn.addEventListener('click',()=>applyTheme(!root.classList.contains('light')));
+      function isSupportedMobile(){const ua=navigator.userAgent||navigator.vendor||window.opera||'';return /Android|iPhone|iPod/i.test(ua);}
+      function showUnsupportedOverlay(){document.getElementById('unsupportedOverlay').style.display='block';}
+      window.addEventListener('load',()=>{setTimeout(()=>{loader.style.opacity='0';setTimeout(()=>{loader.remove();app.hidden=false;if(!isSupportedMobile())showUnsupportedOverlay();},200);},2000);});
     })();
   </script>
 </body>
