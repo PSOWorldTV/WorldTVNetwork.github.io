@@ -5,48 +5,67 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PSOWorldTV Network</title>
   <style>
-    /* ---------- Apple system only ---------- */
-    :root { --bg:#000; --fg:#fff; --muted:#bfbfbf; --glass: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); --NavBlur: rgba(255,255,255,0.04); --glow: 0 0 18px rgba(255,255,255,0.09); --radius:18px; }
+    :root { --bg:#000; --fg:#fff; --muted:#bfbfbf; --glass: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); --NavBlur: rgba(255,255,255,0.04); --glow: 0 0 18px rgba(255,255,255,0.09); }
     :root.light { --bg:#fff; --fg:#000; --muted:#4a4a4a; --glass: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01)); --NavBlur: rgba(0,0,0,0.06); --glow: 0 0 18px rgba(0,0,0,0.09); }
+    html,body{height:100%;margin:0;font-family:-apple-system;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 
-    html,body { height:100%; margin:0; font-family:-apple-system; background:var(--bg); color:var(--fg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow-x:hidden; }
+    .loader-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:9999;}
+    .loader-symbol{display:flex;gap:14px;}
+    .loader-dot{width:10px;height:10px;border-radius:3px;background:var(--fg);opacity:.18;}
+    @keyframes hop{0%{opacity:.18;transform:translateY(0);}30%{opacity:1;transform:translateY(-10px);}60%{opacity:.6;transform:translateY(0);}100%{opacity:.18;transform:translateY(0);}}
+    .loader-dot:nth-child(1){animation:hop 900ms infinite 0ms;}
+    .loader-dot:nth-child(2){animation:hop 900ms infinite 150ms;}
+    .loader-dot:nth-child(3){animation:hop 900ms infinite 300ms;}
 
-    /* ---------- LOADING (centered) ---------- */
-    .loader-wrap {
-      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-      background:var(--bg); z-index:9999;
+    header{padding:32px 28px;display:flex;align-items:center;justify-content:space-between;}
+    .brand{font-weight:700;font-size:18px;}
+    .subtitle{color:var(--muted);font-size:13px;}
+
+    .hero{text-align:center;padding:80px 20px 60px;}
+    .hero h1{margin:0;font-size:28px;}
+    .hero p{margin:8px 0 0;color:var(--muted);font-size:15px;}
+
+    .nav-oval{position:fixed;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;
+      padding:10px 16px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+      border:1px solid var(--NavBlur);background:var(--glass);box-shadow:var(--glow);z-index:50;}
+    .nav-btn{min-width:72px;padding:10px 14px;border:none;background:transparent;color:var(--fg);
+      font-weight:600;border-radius:12px;cursor:pointer;font-family:-apple-system;}
+    .toggle-icon{width:36px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--NavBlur);border-radius:8px;}
+    .nav-oval{bottom:22px;}
+    @media(min-width:900px){.nav-oval{top:26px;bottom:auto;width:760px;}}
+
+    /* ---- Media Bubble ---- */
+    #mediaBubble {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      transform-origin: bottom center;
+      background: var(--glass);
+      border: 1px solid var(--NavBlur);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 14px 24px;
+      box-shadow: var(--glow);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.28s cubic-bezier(.22,.61,.36,1), opacity 0.2s ease;
+      opacity: 0;
+      z-index: 100;
     }
-    .loader-symbol { display:flex; gap:14px; }
-    .loader-dot { width:10px; height:10px; border-radius:3px; background:var(--fg); opacity:.18; transform:translateY(0); }
-    @keyframes hop { 0%{opacity:.18;transform:translateY(0);} 30%{opacity:1;transform:translateY(-10px);} 60%{opacity:.6;transform:translateY(0);} 100%{opacity:.18;transform:translateY(0);} }
-    .loader-dot:nth-child(1){ animation:hop 900ms infinite 0ms; } 
-    .loader-dot:nth-child(2){ animation:hop 900ms infinite 150ms; } 
-    .loader-dot:nth-child(3){ animation:hop 900ms infinite 300ms; }
-
-    header { padding:32px 28px; display:flex; align-items:center; justify-content:space-between; z-index:10; position:relative; }
-    .brand { font-weight:700; font-size:18px; }
-    .subtitle { color:var(--muted); font-size:13px; }
-
-    .hero { position:relative; text-align:center; padding:80px 20px 60px; }
-    .hero h1 { margin:0; font-size:28px; }
-    .hero p { margin:8px 0 0; color:var(--muted); font-size:15px; }
-
-    .nav-oval { position:fixed; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:14px;
-      padding:10px 16px; border-radius:999px; backdrop-filter: blur(6px) saturate(0.7); -webkit-backdrop-filter: blur(6px);
-      border:1px solid var(--NavBlur); background:var(--glass); box-shadow:var(--glow); z-index:50;
+    #mediaBubble.show {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
     }
-    .nav-btn { min-width:72px; padding:10px 14px; border:none; background:transparent; color:var(--fg);
-      font-weight:600; border-radius:12px; cursor:pointer; font-family:-apple-system;
+    #mediaBubble a {
+      text-decoration: none;
+      color: var(--fg);
+      font-size: 22px;
     }
-    .toggle-icon { width:36px; height:28px; display:flex; align-items:center; justify-content:center; border:1px solid var(--NavBlur); border-radius:8px; }
-
-    .nav-oval { bottom:22px; }
-    @media(min-width:900px){
-      .nav-oval { top:26px; bottom:auto; width:760px; }
-    }
-
-    .unsupported-overlay { display:none; position:fixed; inset:0; z-index:9998; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-    .unsupported-card { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:16px; padding:26px 28px; text-align:center; }
+    #mediaBubble a:active {transform: scale(.9);}
   </style>
 </head>
 <body>
@@ -82,14 +101,20 @@
       </section>
     </main>
 
-    <nav class="nav-oval" role="navigation" aria-label="Primary">
+    <!-- iOS-like Media Bubble -->
+    <div id="mediaBubble">
+      <a href="https://www.facebook.com/share/1GcwVdgJ3V/" target="_blank" aria-label="Facebook">📘</a>
+      <a href="https://www.instagram.com/psoworldtv?igsh=NHE2MGEwbndzNXBr" target="_blank" aria-label="Instagram">📸</a>
+      <a href="https://youtube.com/@psoworldtvnetwork?si=KeiiomeHEAvNJAPo" target="_blank" aria-label="YouTube">▶️</a>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-oval">
       <button class="nav-btn" id="nav-home">
         <svg viewBox="0 0 24 24" width="16" height="16"><path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M3 11.5L12 4l9 7.5v6.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path></svg>
         &nbsp;HOME
       </button>
-
       <button class="nav-btn" id="modeBtn"><span class="toggle-icon" id="modeIcon">☀️</span></button>
-
       <button class="nav-btn" id="mediaBtn">
         <svg viewBox="0 0 24 24" width="16" height="16"><path stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path></svg>
         &nbsp;MEDIA
@@ -97,18 +122,38 @@
     </nav>
   </div>
 
-  <div id="unsupportedOverlay" class="unsupported-overlay" aria-hidden="true">
-    <div id="unsupportedBackdrop"></div>
-    <div id="unsupportedCard" class="unsupported-card">
-      <h2>PSOWorldTV Network</h2>
-      <p>This website is not supported on Desktop or Tablet devices.<br>Please use your Phone. Thank you!</p>
-    </div>
-  </div>
-
   <script>
     (function(){
       const loader=document.getElementById('loader'),app=document.getElementById('app');
       const root=document.documentElement,modeBtn=document.getElementById('modeBtn'),modeIcon=document.getElementById('modeIcon');
+      const mediaBtn=document.getElementById('mediaBtn'),mediaBubble=document.getElementById('mediaBubble');
+      const THEME_KEY='psow_world_theme_light';
+
+      function applyTheme(isLight){if(isLight)root.classList.add('light');else root.classList.remove('light');localStorage.setItem(THEME_KEY,isLight?'1':'0');modeIcon.textContent=isLight?'🌙':'☀️';}
+      const saved=localStorage.getItem(THEME_KEY);applyTheme(saved==='1');
+      modeBtn.addEventListener('click',()=>applyTheme(!root.classList.contains('light')));
+
+      function isSupportedMobile(){const ua=navigator.userAgent||navigator.vendor||window.opera||'';return /Android|iPhone|iPod/i.test(ua);}
+      function showUnsupportedOverlay(){document.getElementById('unsupportedOverlay').style.display='block';}
+
+      // --- Media Bubble Toggle Animation ---
+      let bubbleOpen=false;
+      mediaBtn.addEventListener('click',()=>{
+        bubbleOpen=!bubbleOpen;
+        mediaBubble.classList.toggle('show',bubbleOpen);
+      });
+      // Tap outside to close bubble
+      document.addEventListener('click',e=>{
+        if(bubbleOpen && !mediaBtn.contains(e.target) && !mediaBubble.contains(e.target)){
+          bubbleOpen=false;mediaBubble.classList.remove('show');
+        }
+      });
+
+      window.addEventListener('load',()=>{setTimeout(()=>{loader.style.opacity='0';setTimeout(()=>{loader.remove();app.hidden=false;if(!isSupportedMobile())showUnsupportedOverlay();},200);},2000);});
+    })();
+  </script>
+</body>
+</html>
       const THEME_KEY='psow_world_theme_light';
       function applyTheme(isLight){if(isLight)root.classList.add('light');else root.classList.remove('light');localStorage.setItem(THEME_KEY,isLight?'1':'0');modeIcon.textContent=isLight?'🌙':'☀️';}
       const saved=localStorage.getItem(THEME_KEY);applyTheme(saved==='1');
