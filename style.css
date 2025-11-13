@@ -112,7 +112,7 @@ header{padding:32px 28px;display:flex;align-items:center;justify-content:space-b
 #mediaBubble {
   position: fixed;
   bottom: 53px;
-  left: 30%;
+  left: 20%;
   transform: translateX(-50%) scale(0);
   transform-origin: bottom right;
   background: var(--glass);
