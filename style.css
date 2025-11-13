@@ -114,7 +114,7 @@ header{padding:32px 28px;display:flex;align-items:center;justify-content:space-b
   bottom: 80px;
   left: 50%;
   transform: translateX(-50%) scale(0);
-  transform-origin: bottom center;
+  transform-origin: bottom right;
   background: var(--glass);
   border: 1px solid var(--NavBlur);
   backdrop-filter: blur(8px);
@@ -124,7 +124,7 @@ header{padding:32px 28px;display:flex;align-items:center;justify-content:space-b
   box-shadow: var(--glow);
   display: flex;
   gap: 24px;
-  align-items: center;
+  align-items: right;
   justify-content: center;
   transition: transform 0.28s cubic-bezier(.22,.61,.36,1), opacity 0.2s ease;
   opacity: 0;
